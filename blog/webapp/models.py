@@ -9,12 +9,12 @@ class User(models.Model):
     email = models.EmailField(max_length=50, verbose_name='Почта')
 
     def __str__(self):
-        return "%s. %s %s" % (self.pk, self.name, self.email)
+        return "%s. %s %s %s" % (self.pk, self.name, self.surname, self.email)
 
 
 class Article(models.Model):
     title = models.CharField(max_length=50, verbose_name='Заголовок')
-    article = models.TextField(max_length=10000, verbose_name='Статья')
+    description = models.TextField(max_length=10000, verbose_name='Статья')
     author = models.ForeignKey(User, on_delete=models.PROTECT, related_name='articles', verbose_name='Aвтор')
     created_at = models.DateField(blank=True, verbose_name='Дата создания')
 
@@ -41,7 +41,7 @@ class Rating(models.Model):
     RATING_BAD = 'bad'
     RATING_POOR = 'poor'
 
-    STATUS_CHOICES = (
+    RATING_CHOICES = (
         (RATING_EXCELLENT, 'excellent'),
         (RATING_GOOD, 'good'),
         (RATING_SATISFACTORY, 'satisfactory'),
@@ -50,3 +50,6 @@ class Rating(models.Model):
     )
 
     user = models.ForeignKey(User, related_name='article_rating', on_delete=models.PROTECT, verbose_name='Пользователь')
+    article = models.ForeignKey(Article, related_name='user_rating', on_delete=models.PROTECT, verbose_name='Статья')
+    created_at = models.DateField(verbose_name='Дата создания')
+    status = models.CharField(max_length=30, choices=RATING_CHOICES, default=RATING_SATISFACTORY, verbose_name='Оценка')
